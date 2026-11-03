@@ -1,0 +1,31 @@
+# 真实账号数据与产物不进仓库，避免泄露个人信息 / 品牌合作
+portfolio/
+index.html
+data.json
+!demo/data.json
+*真实*.json
+
+# 图片：只留示例占位图，真实封面自行保管
+assets/*.webp
+assets/*.jpg
+assets/*.jpeg
+assets/*.png
+demo/assets/*.webp
+demo/assets/*.jpg
+demo/assets/*.jpeg
+demo/assets/*.png
+demo/index.html
+
+# 抓取中间产物
+posts.json
+c/
+
+# vendor 里的 node_modules 必须提交（内置 CLI 靠它运行）
+node_modules/
+!vendor/redbook/node_modules/
+!vendor/redbook/node_modules/**
+
+__pycache__/
+.DS_Store
+.DS_Store?
+._*

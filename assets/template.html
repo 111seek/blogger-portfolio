@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<meta name="description" content="{{META}}">
+<style>
+:root{
+  --paper:#fbf6ee;      /* 页面底：米白纸 */
+  --sheet:#fffdf9;      /* 卡面：更亮的纸 */
+  --cream:#f4ebdd;      /* 浅色块 */
+  --line:#e8dccb;       /* 分隔线 */
+  --ink:#2e2723;        /* 正文：暖墨色 */
+  --mute:#7b6e64;       /* 次要文字 4.9:1 */
+  --sun:#d9744f;        /* 午后杏橘：大字与装饰 */
+  --sun-ink:#a9502f;    /* 杏橘深：小字可读 5.0:1 */
+  --butter:#f7e2a6;     /* 马克笔高亮 */
+  --sage:#8fa58a;       /* 鼠尾草绿：对比数据 */
+  --sage-soft:#e3eadf;
+  --blush:#f6e1d6;
+  --serif:"Songti SC","STSong","Noto Serif SC","Source Han Serif SC","Source Han Serif CN",serif;
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font:16px/1.8 var(--sans);-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(rgba(120,90,60,.035) 1px,transparent 1px);background-size:4px 4px}
+a{color:inherit;text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--sun-ink);outline-offset:3px;border-radius:6px}
+img{display:block;max-width:100%}
+.wrap{max-width:1100px;margin:0 auto;padding:0 28px}
+.serif{font-family:var(--serif)}
+.mark{background:linear-gradient(transparent 58%,var(--butter) 58%,var(--butter) 92%,transparent 92%);padding:0 .08em}
+
+/* ---------- nav ---------- */
+nav{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--paper) 90%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;height:62px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--serif);font-weight:700;font-size:17px}
+.brand img{width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid var(--sheet);box-shadow:0 0 0 1px var(--line)}
+.links{display:flex;gap:4px;font-size:14px;color:var(--mute)}
+.links a{padding:6px 12px;border-radius:999px;transition:background .2s,color .2s}
+.links a:hover{background:var(--cream);color:var(--ink)}
+.links a small{font-size:11px;color:var(--sun-ink);margin-right:4px;font-variant-numeric:tabular-nums}
+@media(max-width:820px){.links{display:none}}
+
+/* ---------- 时间戳（板块编号） ---------- */
+.clock{display:inline-flex;align-items:center;gap:10px;font-size:13px;color:var(--sun-ink);font-weight:600;letter-spacing:.04em}
+.clock b{font-family:var(--serif);font-size:15px;font-variant-numeric:tabular-nums;background:var(--blush);padding:2px 10px;border-radius:999px}
+
+/* ---------- hero ---------- */
+.hero{padding:44px 0 24px;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:center}
+.hero h1{font-family:var(--serif);font-size:clamp(28px,3.6vw,44px);line-height:1.3;font-weight:700;letter-spacing:.01em;margin:14px 0 16px}
+.lead{font-size:15.5px;color:var(--mute);max-width:560px}
+.lead em{font-style:normal;color:var(--ink)}
+.hero-cta{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:999px;font-size:15px;font-weight:600;transition:transform .25s var(--ease),box-shadow .25s}
+.btn.pri{background:var(--ink);color:var(--paper)}
+.btn.pri:hover{transform:translateY(-2px);box-shadow:0 8px 20px -8px rgba(46,39,35,.5)}
+.btn.sec{border:1.5px solid var(--line);background:var(--sheet)}
+.btn.sec:hover{border-color:var(--sun)}
+
+/* 拍立得堆叠 */
+.stack{position:relative;height:330px}
+.pol{position:absolute;background:var(--sheet);padding:10px 10px 38px;border-radius:4px;box-shadow:0 1px 2px rgba(60,40,20,.08),0 14px 30px -12px rgba(60,40,20,.28);transition:transform .5s var(--ease)}
+.pol img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:50% 42%;border-radius:2px;background:var(--cream)}
+.pol figcaption{position:absolute;left:12px;right:12px;bottom:9px;font-family:var(--serif);font-size:13px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tape{position:absolute;top:-11px;left:50%;width:74px;height:22px;margin-left:-37px;background:rgba(247,226,166,.78);transform:rotate(-3deg);box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.stack .p1{width:165px;left:10%;top:18px;transform:rotate(-6deg);z-index:1}
+.stack .p2{width:165px;right:4%;top:46px;transform:rotate(5deg);z-index:2}
+.stack .p3{width:180px;left:30%;top:80px;transform:rotate(-1deg);z-index:3}
+.stack:hover .p1{transform:rotate(-9deg) translate(-14px,-6px)}
+.stack:hover .p2{transform:rotate(8deg) translate(14px,-4px)}
+.zzz{position:absolute;right:6%;top:4px;font-family:var(--serif);color:var(--sun);font-size:26px;font-weight:700;letter-spacing:.1em;opacity:.8;z-index:4}
+.zzz span{display:inline-block;animation:float 3.6s var(--ease) infinite}
+.zzz span:nth-child(2){font-size:.8em;animation-delay:.4s}
+.zzz span:nth-child(3){font-size:.62em;animation-delay:.8s}
+@keyframes float{0%,100%{transform:translateY(0);opacity:.85}50%{transform:translateY(-8px);opacity:.4}}
+@media(max-width:900px){.hero .wrap{grid-template-columns:1fr}.stack{height:300px;max-width:400px;margin:0 auto;width:100%}.stack .p1,.stack .p2{width:145px}.stack .p3{width:160px;left:28%}}
+
+/* 账本条 */
+.hero .wrap+.wrap{display:block}
+.ledger{margin-top:30px;background:var(--sheet);border:1px solid var(--line);border-radius:20px;display:grid;grid-template-columns:repeat(5,1fr)}
+.ledger div{padding:16px 20px 14px;position:relative}
+.ledger div+div:before{content:"";position:absolute;left:0;top:16px;bottom:16px;border-left:1.5px dashed var(--line)}
+.ledger b{display:block;white-space:nowrap;font-family:var(--serif);font-size:clamp(20px,2.2vw,26px);line-height:1.15;font-weight:700;font-variant-numeric:tabular-nums}
+.ledger b.hl{color:var(--sun)}
+.ledger span{font-size:12px;white-space:nowrap;color:var(--mute)}
+@media(max-width:820px){.ledger{grid-template-columns:repeat(2,1fr)}.ledger div:nth-child(odd):before{display:none}.ledger div:last-child{grid-column:span 2}.ledger div:nth-child(n+3){border-top:1.5px dashed var(--line)}}
+
+/* ---------- section ---------- */
+section{padding:64px 0 24px}
+.sh{margin-bottom:28px;max-width:700px}
+.sh h2{font-family:var(--serif);font-size:clamp(24px,2.8vw,34px);line-height:1.35;font-weight:700;margin:10px 0 8px}
+.sh p{color:var(--mute)}
+
+/* featured */
+.feat{display:grid;grid-template-columns:260px 1fr;gap:40px;align-items:center}
+.feat .pol{position:relative;transform:rotate(-2deg)}
+.feat .pol:hover{transform:rotate(0)}
+.badge{position:absolute;top:22px;left:22px;z-index:2;background:var(--sun);color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:999px;box-shadow:0 4px 10px -4px rgba(169,80,47,.6)}
+.play{position:absolute;right:22px;top:calc(100% - 92px);width:44px;height:44px;border-radius:50%;background:rgba(255,253,249,.92);display:grid;place-items:center;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.play:after{content:"";border-left:13px solid var(--ink);border-top:8px solid transparent;border-bottom:8px solid transparent;margin-left:4px}
+.meta{font-size:13px;color:var(--mute)}
+.feat h3{font-family:var(--serif);font-size:clamp(22px,2.4vw,28px);line-height:1.35;margin:4px 0 10px}
+.quote{font-family:var(--serif);font-size:16px;color:var(--ink);padding:10px 16px;background:var(--cream);border-radius:4px 16px 16px 16px;margin-bottom:16px;position:relative}
+.quote:before{content:"“";position:absolute;left:-6px;top:-18px;font-size:54px;color:var(--sun);line-height:1}
+.kpis{display:flex;gap:30px;flex-wrap:wrap;margin-bottom:12px;padding-bottom:14px;border-bottom:1.5px dashed var(--line)}
+.kpis b{display:block;font-family:var(--serif);font-size:24px;line-height:1.2;font-variant-numeric:tabular-nums}
+.kpis b.hl{color:var(--sun)}
+.kpis span{font-size:12px;color:var(--mute)}
+.why{list-style:none}
+.why li{padding-left:28px;position:relative;margin:7px 0;font-size:14px;color:var(--mute)}
+.why li b{color:var(--ink)}
+.why li:before{content:attr(data-n);position:absolute;left:0;top:2px;width:19px;height:19px;border-radius:50%;background:var(--sage-soft);color:#4f6a4b;font-size:11px;font-weight:700;display:grid;place-items:center;line-height:1}
+.more{display:inline-block;margin-top:8px;font-size:14px;color:var(--sun-ink);font-weight:600;border-bottom:1.5px solid currentColor}
+@media(max-width:900px){.feat{grid-template-columns:1fr;gap:26px}.feat .pol{max-width:240px;margin:0 auto}}
+
+/* 墙上的拍立得 */
+.wall{display:grid;grid-template-columns:repeat(4,1fr);gap:30px 24px;margin-top:48px}
+.wall .pol.ex{display:none}.wall.open .pol.ex{display:block}
+.wall-more{display:flex;justify-content:center;margin-top:26px}
+.wall-more .btn{cursor:pointer;font:inherit;font-size:14px;font-weight:600;color:var(--ink)}
+.wall-more .btn small{color:var(--mute);font-weight:400;margin-left:4px}
+.wall .pol{position:relative;display:block;padding:9px 9px 0}
+.wall .pol:nth-child(4n+1){transform:rotate(-1.6deg)}
+.wall .pol:nth-child(4n+2){transform:rotate(1.2deg)}
+.wall .pol:nth-child(4n+3){transform:rotate(-.6deg)}
+.wall .pol:nth-child(4n+4){transform:rotate(1.8deg)}
+.wall .pol:hover{transform:rotate(0) translateY(-6px);box-shadow:0 1px 2px rgba(60,40,20,.08),0 22px 36px -14px rgba(60,40,20,.34)}
+.wall .tape{width:58px;margin-left:-29px;height:18px}
+.wall .pol:nth-child(even) .tape{background:rgba(227,234,223,.9);transform:rotate(4deg)}
+.rk{position:absolute;top:18px;left:18px;background:rgba(255,253,249,.94);color:var(--ink);font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px}
+.cap{padding:12px 4px 14px}
+.cap h4{font-family:var(--serif);font-size:15px;line-height:1.5;font-weight:700;min-height:45px}
+.cap .m{display:flex;gap:12px;font-size:12px;color:var(--mute);margin-top:8px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.cap .m b{color:var(--ink)}
+.cap .lab{display:inline-block;margin-top:8px;font-size:11px;padding:1px 8px;border-radius:999px;background:var(--cream);color:var(--mute)}
+@media(max-width:960px){.wall{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:640px){.wall{grid-template-columns:repeat(2,1fr);gap:26px 16px}.stack{height:250px}.stack .p1,.stack .p2{width:120px}.stack .p3{width:134px}.hero{padding-top:28px}}
+
+/* data */
+.panel{background:var(--sheet);border:1px solid var(--line);border-radius:22px;padding:28px 28px 18px}
+.legend{display:flex;gap:20px;font-size:12px;color:var(--mute);margin-bottom:6px;flex-wrap:wrap}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.panel svg{width:100%;height:auto;display:block}
+.note{font-size:13px;color:var(--mute);margin-top:6px}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}
+.duo .panel{padding:28px}
+.duo h4{font-family:var(--serif);font-size:20px;margin-bottom:6px}
+.duo p{font-size:14px;color:var(--mute);margin-bottom:8px}
+.bar{display:grid;grid-template-columns:44% 1fr 46px;align-items:center;gap:12px;font-size:13px;margin:11px 0}
+.bar .lb{color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .tr{display:block;height:10px;background:var(--cream);border-radius:5px;overflow:hidden}
+.bar .fl{display:block;height:100%;border-radius:5px;background:var(--sage);transform-origin:left;transition:transform 1.1s var(--ease)}
+.bar .fl.hot{background:var(--sun)}
+.bar .vl{text-align:right;font-variant-numeric:tabular-nums;color:var(--mute)}
+@media(max-width:860px){.duo{grid-template-columns:1fr}}
+.swipe{display:none;font-size:12px;color:var(--mute)}
+@media(max-width:640px){.panel{overflow-x:auto;-webkit-overflow-scrolling:touch}.panel svg{min-width:620px}.swipe{display:inline}}
+
+/* timeline */
+.tl{position:relative;padding-left:34px}
+.tl:before{content:"";position:absolute;left:8px;top:10px;bottom:10px;border-left:2px dashed var(--line)}
+.ti{position:relative;margin-bottom:26px}
+.ti:before{content:"";position:absolute;left:-33px;top:30px;width:16px;height:16px;border-radius:50%;background:var(--sun);border:4px solid var(--blush)}
+.ti.todo:before{background:var(--sheet);border:2px dashed var(--mute)}
+.ti .card{background:var(--sheet);border:1px solid var(--line);border-radius:20px;padding:28px 30px}
+.ti.todo .card{background:transparent;border-style:dashed}
+.ti .hd{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--mute)}
+.ti h3{font-family:var(--serif);font-size:22px;line-height:1.45;margin:8px 0 10px}
+.ti p{color:var(--mute);font-size:15px}
+.nums{display:flex;gap:42px;margin-top:22px;flex-wrap:wrap}
+.nums b{font-family:var(--serif);font-size:28px;display:block;line-height:1.2;color:var(--sun);font-variant-numeric:tabular-nums}
+.nums span{font-size:13px;color:var(--mute)}
+/* 成绩单 / 受众画像 / 总结 */
+.score{display:grid;grid-template-columns:1fr 1fr;gap:0 34px;margin-top:24px;border-top:1.5px dashed var(--line)}
+.score>div{padding:15px 0 14px;border-bottom:1.5px dashed var(--line);min-width:0}
+.score>div:nth-child(odd){border-right:1.5px dashed var(--line);padding-right:32px}
+.score>div:nth-child(even){padding-left:32px}
+.score b{display:block;font-family:var(--serif);font-size:clamp(24px,2.6vw,30px);line-height:1.15;color:var(--sun);font-variant-numeric:tabular-nums}
+.ti .score p{font-size:14px;color:var(--ink);margin-top:5px;line-height:1.5}
+.score p em{display:block;font-style:normal;font-size:12.5px;color:var(--mute);margin-top:3px;line-height:1.55}
+.aud{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.aud>div{background:var(--sage-soft);border-radius:14px;padding:12px 14px}
+.aud b{display:block;font-family:var(--serif);font-size:21px;line-height:1.2;color:#3f5a3b;font-variant-numeric:tabular-nums}
+.aud span{display:block;font-size:12.5px;color:#46543f;margin-top:3px}
+.aud i{display:block;height:4px;border-radius:99px;background:rgba(63,90,59,.16);margin-top:9px;overflow:hidden}
+.aud i:before{content:"";display:block;height:100%;width:var(--w);border-radius:99px;background:#6f8a68}
+.sum{margin-top:20px;padding:16px 22px 18px;background:var(--cream);border-left:3px solid var(--sun);border-radius:4px 16px 16px 4px}
+.sum .lab{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.06em;color:#8c4322;background:var(--butter);padding:2px 10px;border-radius:999px;margin-bottom:6px}
+.ti .sum p{font-size:14.5px;color:var(--ink);line-height:1.85}
+.sum p b{color:var(--sun-ink);font-weight:700}
+@media(max-width:640px){.score{grid-template-columns:1fr;gap:0}.score>div,.score>div:nth-child(odd),.score>div:nth-child(even){padding:12px 0 11px;border-right:0}.aud{gap:6px}.aud>div{padding:9px 7px}.aud b{font-size:17px}.aud span{font-size:11px;white-space:nowrap}.aud i{margin-top:7px}.sum{padding:14px 16px}.ti .sum p{font-size:14px}}
+.ph{background:var(--butter);color:var(--ink);padding:0 6px;border-radius:4px}
+.stickers{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.stickers span{background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:7px 14px;font-size:14px;box-shadow:0 2px 0 var(--line)}
+.stickers span:nth-child(3n+1){transform:rotate(-1.2deg)}
+.stickers span:nth-child(3n+2){transform:rotate(.8deg)}
+.stickers small{color:var(--mute);margin-left:6px;font-size:12px}
+
+/* method */
+.rules{display:grid;grid-template-columns:repeat(2,1fr);gap:0 56px}
+.rule{padding:30px 0;border-top:1.5px solid var(--line);display:grid;grid-template-columns:64px 1fr;gap:6px}
+.rule .n{font-family:var(--serif);font-size:44px;line-height:1;color:var(--sun);font-weight:700}
+.rule h3{font-family:var(--serif);font-size:21px;margin-bottom:8px}
+.rule p{color:var(--mute);font-size:15px}
+.ev{margin-top:14px;font-size:14px;background:var(--sage-soft);color:#3f5a3b;padding:8px 14px;border-radius:10px;display:inline-block}
+.ev b{font-family:var(--serif);font-size:16px}
+@media(max-width:820px){.rules{grid-template-columns:1fr}}
+
+/* retro */
+.retro{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.rc{background:var(--sheet);border:1px solid var(--line);border-radius:20px;padding:24px 26px;position:relative;display:grid;grid-template-columns:auto 1fr;gap:4px 18px;align-items:start}
+.rc .big{grid-row:span 3;font-family:var(--serif);font-size:30px;font-weight:700;color:var(--sun);line-height:1.1;min-width:96px;white-space:nowrap}
+.rc .big small{display:block;font-family:var(--sans);font-size:12px;font-weight:400;color:var(--mute);margin-top:6px;white-space:normal}
+.rc .tg{justify-self:start;font-size:12px;font-weight:700;padding:2px 11px;border-radius:999px;background:var(--sage-soft);color:#3f5a3b}
+.rc.ok .tg{background:var(--sage-soft);color:#3f5a3b}
+.rc.bad .tg{background:var(--blush);color:var(--sun-ink)}
+.rc.next .tg{background:var(--butter);color:#6b5413}
+.rc h4{font-family:var(--serif);font-size:19px;margin:2px 0}
+.rc p{font-size:15px;color:var(--mute)}
+@media(max-width:860px){.retro{grid-template-columns:1fr}}
+
+/* about */
+.about{background:var(--sheet);border:1px solid var(--line);border-radius:28px;padding:56px;display:grid;grid-template-columns:1.1fr 1fr;gap:56px;align-items:center;margin-bottom:60px;position:relative;overflow:hidden}
+.about:after{content:"";position:absolute;right:-80px;top:-80px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,var(--butter),transparent 70%);opacity:.7;pointer-events:none}
+.about h2{font-family:var(--serif);font-size:clamp(28px,3.6vw,40px);line-height:1.4;margin:14px 0 18px}
+.about p{color:var(--mute)}
+.facts{list-style:none;position:relative;z-index:1}
+.facts li{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1.5px dashed var(--line);font-size:15px}
+.facts li span{color:var(--mute);flex-shrink:0}
+.facts li b{text-align:right;font-weight:600;word-break:break-all}
+@media(max-width:860px){.about{grid-template-columns:1fr;padding:34px 26px;gap:30px}}
+
+footer{border-top:1px solid var(--line);padding:30px 0 50px;color:var(--mute);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* reveal：仅在 JS 可用时启用，避免内容丢失 */
+.js .rv{opacity:0;transform:translateY(18px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.js .rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.js .rv{opacity:1;transform:none}}
+@media print{nav{display:none}.js .rv{opacity:1;transform:none}section{padding:40px 0 10px}body{background:#fff}}
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <a class="brand" href="#top"><img src="{{AVATAR}}" alt="">{{NAME}}</a>
+  <div class="links">
+    <a href="#works"><small>12:15</small>作品</a><a href="#data"><small>12:40</small>数据</a><a href="#exp"><small>13:00</small>经历</a><a href="#method"><small>13:20</small>方法</a><a href="#retro"><small>13:40</small>优势</a><a href="#about"><small>14:00</small>关于</a>
+  </div>
+</div></nav>
+
+<header class="hero" id="top"><div class="wrap">
+  <div>
+    <span class="clock"><b>12:00</b>{{HERO_CLOCK}}</span>
+    <h1>{{HERO_H1}}</h1>
+    <p class="lead">{{HERO_LEAD}}</p>
+    <div class="hero-cta">
+      <a class="btn pri" href="#works">看看我的作品 ↓</a>
+      <a class="btn sec" href="{{PROFILE_URL}}" target="_blank" rel="noopener">小红书主页 ↗</a>
+    </div>
+  </div>
+  <div class="stack" aria-hidden="true">
+    <div class="zzz"><span>Z</span><span>z</span><span>z</span></div>
+    <figure class="pol p1"><span class="tape"></span><img data-note="2" alt=""><figcaption></figcaption></figure>
+    <figure class="pol p2"><span class="tape"></span><img data-note="3" alt=""><figcaption></figcaption></figure>
+    <figure class="pol p3"><span class="tape"></span><img data-note="1" alt=""><figcaption></figcaption></figure>
+  </div>
+</div>
+<div class="wrap">
+  <div class="ledger rv">{{LEDGER}}
+  </div>
+</div></header>
+
+<section id="works"><div class="wrap">
+  <!--EDIT:works--><div class="sh rv"><span class="clock"><b>12:15</b>作品</span><h2>数据最好的 9 条笔记</h2>
+  <p>全部为本人选题、出镜、拍摄、剪辑的原创视频笔记，按点赞排序。点开任意一张，可以跳到小红书看原片。</p></div>
+
+  <!--EDIT:featured--><div class="feat rv">
+    <a class="pol" href="https://www.xiaohongshu.com/explore/6809f2b50000000009017826" target="_blank" rel="noopener" aria-label="在小红书查看：雨天的床车午休有多香">
+      <span class="tape"></span><span class="badge">TOP 1 · 账号最高</span>
+      <img data-note="1" alt="笔记封面：雨天的床车午休有多香">
+      <span class="play"></span>
+      <figcaption>2025.04.24 · 一个下雨的中午</figcaption>
+    </a>
+    <div>
+      <span class="meta">视频 · 品牌合作：倍轻松 × 京东国补</span>
+      <h3>雨天的床车午休有多香！</h3>
+      <div class="quote">雨天、床、车和我，就是工作日里最治愈的组合。</div>
+      <div class="kpis">
+        <div><b class="hl">7.6万</b><span>点赞</span></div>
+        <div><b>6,202</b><span>收藏</span></div>
+        <div><b>831</b><span>分享</span></div>
+        <div><b>281</b><span>评论</span></div>
+      </div>
+      <ul class="why">
+        <li data-n="1"><b>情绪先行：</b>雨天哪也去不了，车里那张床就成了最安全的地方。全篇只卖这一种感觉</li>
+        <li data-n="2"><b>文案留白：</b>正文只有一句话，把解读空间留给观众，评论区自发聊起自己的午休</li>
+        <li data-n="3"><b>商单藏在情绪后面：</b>按摩仪只是道具，不是主角。这条商单的点赞是账号篇均的 28 倍</li>
+      </ul>
+      <a class="more" href="https://www.xiaohongshu.com/explore/6809f2b50000000009017826" target="_blank" rel="noopener">在小红书看原片 ↗</a>
+    </div>
+  </div>
+
+  <div class="wall" id="wall"></div>
+  <div class="wall-more"><button class="btn sec" id="wallBtn" type="button" aria-expanded="false" aria-controls="wall">展开 TOP 6–9 <small>还有 4 篇</small> ↓</button></div>
+</div></section>
+
+<section id="data"><div class="wrap">
+  <!--EDIT:datahead--><div class="sh rv"><span class="clock"><b>12:40</b>数据</span><h2>两年，90 篇，一条成长曲线</h2>
+  <p>按季度汇总全部笔记的点赞。数据采集于 2026-11-03，是每篇笔记截至当天的累计值。</p></div>
+  <div class="panel rv">
+    <div class="legend"><span><i style="background:var(--sun);border-radius:50%"></i>巅峰季度</span><span><i style="background:var(--sage);border-radius:50%"></i>季度累计点赞</span><span>横轴下为当季发布篇数</span></div>
+    <svg id="qchart" viewBox="0 0 1000 330" role="img" aria-label="各季度累计点赞曲线图，2025 年第二季度最高，约 9.3 万"></svg>
+  </div>
+  <div class="duo">
+    <div class="panel rv">
+      <h4>什么内容会被“转给同事”</h4>
+      <p>分享数 ÷ 点赞数。带“同事 / 带床上班 / 节后”的职场选题，分享数接近甚至超过点赞；纯氛围的 TOP 1 只有 1%。观众看完就转给同事，内容成了办公室里的社交货币。</p>
+      <div id="share"></div>
+    </div>
+    <div class="panel rv">
+      <h4>什么内容会被“收藏”</h4>
+      <p>收藏数 ÷ 点赞数。冬日小窝、节后带床、洗车攻略这类带实用信息的内容收藏率最高，会被反复翻看，长尾流量更稳。</p>
+      <div id="collect"></div>
+    </div>
+  </div>
+</div></section>
+
+<!--EDIT:experience--><section id="exp"><div class="wrap">
+  <div class="sh rv"><span class="clock"><b>13:00</b>经历</span><h2>我做过的事</h2>
+  <p>从一个人、一台车开始，把一个小场景做成了一类内容。</p></div>
+  <div class="tl">
+    <div class="ti rv"><div class="card">
+      <div class="hd"><span>小红书 {{HANDLE}} · {{ROLES}}</span><span>{{START}} – 至今</span></div>
+      <h3>从 0 做出“床车午休”内容，一个人跑通选题、增长与商业化</h3>
+      <p>发现“打工人中午没地方睡”这个高频、普遍、却没人认真拍过的痛点，用理想 L6/L7 后排床车做系列化视频。前 8 个月跑出 4 条万赞笔记，确立“打工人 / 牛马 / 带床上班”的人设与标题体系；之后承接家电、汽车用品、家纺、食品等品类的品牌合作，也多次受平台官方号 @汽车薯、@职场薯 邀约参与话题活动。</p>
+      <div class="score">
+        <div><b>1000万+</b><p>累计阅读<em>90 篇原创视频笔记，从选题到剪辑全部独立完成</em></p></div>
+        <div><b>95%</b><p>破万阅读率<em>2 篇破 100 万 · 16 篇破 40 万 · 30+ 篇破 10 万</em></p></div>
+        <div><b>189万</b><p>单篇最高阅读<em>单篇最高 7.6 万赞，账号累计 29.3 万获赞与收藏</em></p></div>
+        <div><b>70+</b><p>合作品牌<em>多家复投 3 次以上，最高单日店铺成交 30 万+</em></p></div>
+      </div>
+
+      <div class="aud" aria-label="粉丝画像">
+        <div><b>80%+</b><span>一二线城市</span><i style="--w:80%"></i></div>
+        <div><b>60%+</b><span>女性粉丝</span><i style="--w:60%"></i></div>
+        <div><b>70%+</b><span>20–50 岁</span><i style="--w:70%"></i></div>
+      </div>
+
+      <div class="sum">
+        <span class="lab">总结</span>
+        <p>一个人、一台车，把“中午在车里睡一觉”这件没人认真拍过的小事，做成了一个内容品类：<b>90 篇原创、1000 万阅读、95% 的笔记都能破万</b>。更关键的是它可持续——不是靠一两条爆款赌运气，而是一套能复用的选题与标题方法；<b>70+ 品牌、多家复投、单日 30 万成交</b>，说明这套内容能力可以直接换成生意。</p>
+      </div>
+    </div></div>
+    <div class="ti todo rv"><div class="card">
+      <div class="hd"><span class="ph">【待填：公司 · 职位】</span><span class="ph">【待填：起止时间】</span></div>
+      <h3><span class="ph">【待填：一句话概括这段工作最大的成绩】</span></h3>
+      <p>写法：遇到的难题 → 做了什么 → 用 2~3 个数字收尾（比如“负责 X 个账号 / 涨粉 X 万 / 单月带来 X 条线索”）。</p>
+    </div></div>
+    <div class="ti todo rv"><div class="card">
+      <div class="hd"><span class="ph">【待填：公司 · 职位】</span><span class="ph">【待填：起止时间】</span></div>
+      <h3><span class="ph">【待填：另一段经历】</span></h3>
+      <p>没有正式新媒体岗位经历也没关系，写和内容、用户、活动相关的项目，同样按“难题 → 动作 → 数字”来写。</p>
+    </div></div>
+  </div>
+  <div class="rv" style="margin-top:30px">
+    <p style="color:var(--mute);font-size:14px">笔记里合作过的品牌与平台活动</p>
+    <div class="stickers">
+      {{BRANDS}}
+    </div>
+  </div>
+</div></section>
+
+<!--EDIT:method--><section id="method"><div class="wrap">
+  <div class="sh rv"><span class="clock"><b>13:20</b>方法</span><h2>我做内容的四条原则</h2>
+  <p>每一条都有账号的真实数据作证，不是口号。</p></div>
+  <div class="rules">
+    <div class="rule rv"><span class="n">1</span><div><h3>卖场景，不卖产品</h3>
+      <p>观众关心的不是“车”，而是“上班族中午终于有地方躺下”。车只是道具，“打工人想躲两小时”才是真正被点赞的东西。</p>
+      <span class="ev">90 篇里有 <b>61 篇</b>围绕“午休”这一个场景</span></div></div>
+    <div class="rule rv"><span class="n">2</span><div><h3>情绪留白，比信息量更重要</h3>
+      <p>爆款的文案往往最短。说得太满，观众就没有参与的空间；只留一句话，评论区会替你把故事讲完。</p>
+      <span class="ev">TOP 1 正文仅 <b>1 句话</b>，获赞 7.6 万</span></div></div>
+    <div class="rule rv"><span class="n">3</span><div><h3>先占住一个关键词，再复制模板</h3>
+      <p>“打工人 / 牛马 / 带床上班 / 床车午休”这套词反复出现，让账号在这个搜索词下稳定被找到，也让粉丝一眼认出是我。</p>
+      <span class="ev">点赞过千的笔记有 <b>38 篇</b></span></div></div>
+    <div class="rule rv"><span class="n">4</span><div><h3>商单藏在情绪后面</h3>
+      <p>品牌产品作为生活里的自然道具出现，不打断故事。观众先被场景打动，然后才注意到产品——品牌要的是被记住，不是被跳过。</p>
+      <span class="ev">TOP 9 里有 <b>7 篇</b>是品牌合作</span></div></div>
+  </div>
+</div></section>
+
+<!--EDIT:strengths--><section id="retro"><div class="wrap">
+  <div class="sh rv"><span class="clock"><b>13:40</b>优势</span><h2>我能带给团队的四件事</h2>
+  <p>每一条都来自这个账号两年的真实数据。</p></div>
+  <div class="retro">
+    <div class="rc rv"><div class="big">0 → 1.53万<small>粉丝，一个人做到</small></div><span class="tg">全链路</span><h4>一个人跑通一条内容线</h4><p>选题、出镜、拍摄、剪辑、发布、品牌对接全部独立完成，从冷启动到稳定产出，90 篇原创视频无外包，95% 的笔记阅读破万。</p></div>
+    <div class="rc rv"><div class="big">38 篇<small>点赞过千，占全部 43%</small></div><span class="tg">爆款能力</span><h4>能稳定做出爆款</h4><p>4 篇万赞笔记，单篇最高 7.6 万赞。不是一次运气，而是一套可复制的选题和标题方法。</p></div>
+    <div class="rc rv"><div class="big">1.6万<small>单篇分享，分享率最高 123%</small></div><span class="tg">传播力</span><h4>懂得做“会被转发”的内容</h4><p>职场共鸣类选题让观众主动转给同事，分享数甚至超过点赞，内容自带社交裂变。</p></div>
+    <div class="rc rv"><div class="big">70+<small>合作品牌，多家复投 3 次以上</small></div><span class="tg">商业化</span><h4>商单也能做成爆款</h4><p>把产品自然放进生活场景，账号最高赞的 7.6 万就是一条商单；合作品牌店铺反馈单日成交 30 万+，多个品牌复投 3 次以上。</p></div>
+  </div>
+</div></section>
+
+<!--EDIT:about--><section id="about" style="padding-bottom:0"><div class="wrap">
+  <div class="about rv">
+    <div>
+      <span class="clock"><b>14:00</b>闹钟响了，回去上班</span>
+      <h2>30+ 打工人，<br>一台车，一张床。</h2>
+      <p>我不是专业摄影师，也没有团队。我做的事情很简单：认真过自己的日常，把那些大家都有、却没人说出口的小情绪拍出来。<br><br>我相信好内容不靠堆信息，而是让人看完觉得：<span class="mark" style="color:var(--ink)">这说的就是我</span>。</p>
+    </div>
+    <ul class="facts">
+{{FACTS}}
+    </ul>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <span>© {{NAME}} · {{TAGLINE}}</span>
+  <span>数据来源：小红书公开页面，采集于 {{COLLECTED_AT}}</span>
+</div></footer>
+
+<script>
+document.documentElement.classList.add('js');
+const NOTES = {{NOTES}};
+const Q = {{QUARTERS}};
+const toN = s => { s = String(s||0); return s.includes('万') ? parseFloat(s)*10000 : parseInt(s,10)||0; };
+const fmt = n => n >= 10000 ? (n/10000).toFixed(1).replace(/\.0$/,'') + '万' : n.toLocaleString('en-US');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const byRank = r => NOTES.find(n => n.rank === r);
+
+// 填充 hero 与 featured 封面（同一份 base64 复用）
+document.querySelectorAll('img[data-note]').forEach(img => {
+  const n = byRank(+img.dataset.note); img.src = n.img;
+  const cap = img.parentElement.querySelector('figcaption');
+  if (cap && !cap.textContent) cap.textContent = n.title;
+});
+
+// 拍立得墙：TOP 2–9
+document.getElementById('wall').innerHTML = NOTES.slice(1).map(n => `
+  <a class="pol rv${n.rank>5?' ex':''}" href="${n.url}" target="_blank" rel="noopener">
+    <span class="tape"></span>
+    <img src="${n.img}" alt="笔记封面：${esc(n.title)}" loading="lazy">
+    <span class="rk">TOP ${n.rank}</span>
+    <div class="cap"><h4>${esc(n.title)}</h4>
+      <div class="m"><span>赞 <b>${n.like}</b></span><span>藏 <b>${n.collect}</b></span><span>享 <b>${n.share}</b></span></div>
+      <span class="lab">${n.date.replace(/-/g,'.')}${n.brand ? ' · ' + esc(n.brand) : ''}</span>
+    </div>
+  </a>`).join('');
+const wall = document.getElementById('wall'), wallBtn = document.getElementById('wallBtn');
+wallBtn.addEventListener('click', () => {
+  const open = wall.classList.toggle('open');
+  wallBtn.setAttribute('aria-expanded', open);
+  wallBtn.innerHTML = open ? '收起 ↑' : '展开 TOP 6–9 <small>还有 4 篇</small> ↓';
+  if (open) wall.querySelectorAll('.ex').forEach(el => el.classList.add('in'));
+});
+
+// 比率条
+function bars(id, key){
+  const rows = NOTES.map(n => ({t:n.title, r: toN(n[key]) / toN(n.like)})).sort((a,b)=>b.r-a.r).slice(0,6);
+  const max = rows[0].r;
+  document.getElementById(id).innerHTML = rows.map((x,i) => `
+    <div class="bar"><span class="lb" title="${esc(x.t)}">${esc(x.t)}</span>
+    <span class="tr"><span class="fl${i<2?' hot':''}" style="width:${(x.r/max*100).toFixed(1)}%"></span></span>
+    <span class="vl">${(x.r*100).toFixed(0)}%</span></div>`).join('');
+}
+bars('share','share'); bars('collect','collect');
+
+// 季度曲线图
+(function(){
+  const svg = document.getElementById('qchart');
+  const css = getComputedStyle(document.documentElement), c = v => css.getPropertyValue(v).trim();
+  const W=1000,H=330,L=60,R=30,T=34,B=50, cw=W-L-R, ch=H-T-B, max=100000, n=Q.length, slot=cw/n;
+  const peak = Math.max(...Q.map(q=>q[2]));
+  const pts = Q.map(([q,cnt,lk],i)=>[L+slot*i+slot/2, T+ch-lk/max*ch]);
+  // Catmull-Rom → 贝塞尔，得到平滑曲线；控制点 y 夹在绘图区内，避免冲出 0 线
+  const clampY = y => Math.min(T+ch, Math.max(T, y));
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i=0;i<pts.length-1;i++){
+    const p0=pts[i-1]||pts[i], p1=pts[i], p2=pts[i+1], p3=pts[i+2]||p2, k=9;
+    d += ` C${p1[0]+(p2[0]-p0[0])/k},${clampY(p1[1]+(p2[1]-p0[1])/k)} ${p2[0]-(p3[0]-p1[0])/k},${clampY(p2[1]-(p3[1]-p1[1])/k)} ${p2[0]},${p2[1]}`;
+  }
+  const area = d + ` L${pts[n-1][0]},${T+ch} L${pts[0][0]},${T+ch} Z`;
+  let s = `<defs><linearGradient id="qg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c('--sun')}" stop-opacity=".28"/><stop offset="1" stop-color="${c('--sage')}" stop-opacity=".04"/></linearGradient></defs>`;
+  [0,25000,50000,75000,100000].forEach(v=>{
+    const y = T+ch-v/max*ch;
+    s += `<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="${c('--line')}" stroke-dasharray="${v?'4 5':'0'}"/>`;
+    s += `<text x="${L-12}" y="${y+4}" text-anchor="end" font-size="12" fill="${c('--mute')}">${v?(v/10000)+'万':'0'}</text>`;
+  });
+  s += `<path d="${area}" fill="url(#qg)"/>`;
+  s += `<path id="qline" d="${d}" fill="none" stroke="${c('--sun')}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+  Q.forEach(([q,cnt,lk],i)=>{
+    const [x,y]=pts[i], hot=lk===peak;
+    s += `<circle cx="${x}" cy="${y}" r="${hot?7:4.5}" fill="${hot?c('--sun'):c('--sheet')}" stroke="${hot?c('--sheet'):c('--sun')}" stroke-width="${hot?3:2.5}"/>`;
+    if (hot || i===0 || i===n-1) s += `<text x="${x}" y="${y-(hot?16:12)}" text-anchor="middle" font-size="${hot?14:12.5}" font-weight="700" fill="${hot?c('--sun-ink'):c('--ink')}">${fmt(lk)}</text>`;
+    s += `<text x="${x}" y="${H-B+22}" text-anchor="middle" font-size="12" fill="${c('--ink')}">${q.replace(/^(\d\d)Q/,'$1年Q')}</text>`;
+    s += `<text x="${x}" y="${H-B+40}" text-anchor="middle" font-size="11" fill="${c('--mute')}">${cnt} 篇</text>`;
+  });
+  svg.innerHTML = s;
+  // 描线动画
+  const line = document.getElementById('qline'), len = line.getTotalLength();
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    line.style.strokeDasharray = len; line.style.strokeDashoffset = len;
+    new IntersectionObserver((es,o)=>{ if(es[0].isIntersecting){ line.style.transition='stroke-dashoffset 1.6s cubic-bezier(.22,1,.36,1)'; line.style.strokeDashoffset=0; o.disconnect(); } }).observe(svg);
+    setTimeout(()=>{ line.style.strokeDashoffset=0; }, 3000);
+  }
+})();
+
+// 滚动渐显
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), {rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+// 兜底：快速滚动/打印/截图时确保内容全部显现
+setTimeout(() => document.querySelectorAll('.rv:not(.in)').forEach(el => el.classList.add('in')), 2500);
+</script>
+</body>
+</html>

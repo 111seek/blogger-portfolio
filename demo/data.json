@@ -1,0 +1,205 @@
+{
+  "site": {
+    "title": "林小满 · 午休日记 · 内容运营作品集",
+    "meta": "把打工人最短的一段时间，做成了一个内容品类。床车午休生活博主（示例人物），90 篇原创笔记、1000 万+ 阅读、70+ 品牌合作。",
+    "name": "林小满",
+    "tagline": "午休日记",
+    "handle": "@linxiaoman",
+    "profile_url": "https://www.xiaohongshu.com/user/profile/660000000000000000000001",
+    "collected_at": "2026-11-03",
+    "avatar": "assets/avatar.svg",
+    "start": "2024.09"
+  },
+  "hero": {
+    "clock": "熄火，放平座椅，午休开始",
+    "h1": "把打工人最短的一段时间，<br>做成了一个<span class=\"mark\">内容品类</span>。",
+    "lead": "午休两小时，公司楼下，一张铺在后排的床。2024 年 9 月我发出第一条笔记，把“床车午休”这个<em>人人都懂、却没人认真拍过</em>的小场景，做成了 90 篇笔记、1000 万+ 阅读、70+ 品牌合作的生活方式内容。",
+    "roles": "选题 / 出镜 / 拍摄 / 剪辑 / 商务对接"
+  },
+  "ledger": [
+    {
+      "value": "1000万+",
+      "label": "累计阅读",
+      "hl": true
+    },
+    {
+      "value": "189万",
+      "label": "单篇最高阅读",
+      "hl": false
+    },
+    {
+      "value": "29.3万",
+      "label": "获赞与收藏",
+      "hl": false
+    },
+    {
+      "value": "1.53万",
+      "label": "粉丝",
+      "hl": false
+    },
+    {
+      "value": "90 篇",
+      "label": "原创笔记 · 95% 破万",
+      "hl": false
+    }
+  ],
+  "facts": [
+    {
+      "k": "坐标",
+      "v": "示例城市"
+    },
+    {
+      "k": "毕业院校",
+      "v": "示例大学"
+    },
+    {
+      "k": "座驾 / 午休房",
+      "v": "示例车型 · 床车改装"
+    },
+    {
+      "k": "小红书号",
+      "v": "demo-0001"
+    },
+    {
+      "k": "作品",
+      "v": "90 篇原创视频笔记"
+    },
+    {
+      "k": "联系",
+      "v": "demo@example.com"
+    }
+  ],
+  "notes": [
+    {
+      "rank": 1,
+      "title": "公司楼下，我把后排改成了一间卧室",
+      "date": "2025-04-24",
+      "like": "7.6万",
+      "collect": "6202",
+      "share": "831",
+      "comment": "281",
+      "url": "https://www.xiaohongshu.com/explore/66000000000000000000a001",
+      "brand": "轻氧",
+      "img": "assets/note-1.svg"
+    },
+    {
+      "rank": 2,
+      "title": "午休两小时，够睡一觉再加一顿饭",
+      "date": "2025-02-15",
+      "like": "2.2万",
+      "collect": "4373",
+      "share": "1.6万",
+      "comment": "1348",
+      "url": "https://www.xiaohongshu.com/explore/66000000000000000000a002",
+      "brand": "",
+      "img": "assets/note-2.svg"
+    },
+    {
+      "rank": 3,
+      "title": "同事说我矫情，直到他躺进来",
+      "date": "2025-02-19",
+      "like": "1.2万",
+      "collect": "2099",
+      "share": "7747",
+      "comment": "575",
+      "url": "https://www.xiaohongshu.com/explore/66000000000000000000a003",
+      "brand": "白鹿",
+      "img": "assets/note-3.svg"
+    },
+    {
+      "rank": 4,
+      "title": "冬天的车里，比办公室暖 5 度",
+      "date": "2024-12-27",
+      "like": "1.1万",
+      "collect": "1257",
+      "share": "2609",
+      "comment": "361",
+      "url": "https://www.xiaohongshu.com/explore/66000000000000000000a004",
+      "brand": "云棠",
+      "img": "assets/note-4.svg"
+    },
+    {
+      "rank": 5,
+      "title": "一分钟铺床，三分钟睡着",
+      "date": "2025-03-18",
+      "like": "9537",
+      "collect": "2191",
+      "share": "1.1万",
+      "comment": "1272",
+      "url": "https://www.xiaohongshu.com/explore/66000000000000000000a005",
+      "brand": "山野",
+      "img": "assets/note-5.svg"
+    },
+    {
+      "rank": 6,
+      "title": "车里午睡三个月，我戒掉了下午的咖啡",
+      "date": "2024-12-20",
+      "like": "8949",
+      "collect": "2625",
+      "share": "6306",
+      "comment": "1059",
+      "url": "https://www.xiaohongshu.com/explore/66000000000000000000a006",
+      "brand": "拾光",
+      "img": "assets/note-6.svg"
+    },
+    {
+      "rank": 7,
+      "title": "通勤 40 分钟，我把午休搬进了车里",
+      "date": "2026-01-21",
+      "like": "8779",
+      "collect": "1736",
+      "share": "1023",
+      "comment": "206",
+      "url": "https://www.xiaohongshu.com/explore/66000000000000000000a007",
+      "brand": "小满",
+      "img": "assets/note-7.svg"
+    },
+    {
+      "rank": 8,
+      "title": "洗车 15 分钟，顺手把午休解决了",
+      "date": "2025-04-10",
+      "like": "5418",
+      "collect": "1397",
+      "share": "820",
+      "comment": "187",
+      "url": "https://www.xiaohongshu.com/explore/66000000000000000000a008",
+      "brand": "北纬",
+      "img": "assets/note-8.svg"
+    },
+    {
+      "rank": 9,
+      "title": "节后第一天，我在车里躲了两个小时",
+      "date": "2025-02-08",
+      "like": "5358",
+      "collect": "1422",
+      "share": "6598",
+      "comment": "484",
+      "url": "https://www.xiaohongshu.com/explore/66000000000000000000a009",
+      "brand": "",
+      "img": "assets/note-9.svg"
+    }
+  ],
+  "quarters": [
+    ["24Q3", 1, 260],
+    ["24Q4", 17, 37117],
+    ["25Q1", 18, 63584],
+    ["25Q2", 13, 93497],
+    ["25Q3", 5, 9006],
+    ["25Q4", 10, 10689],
+    ["26Q1", 8, 15448],
+    ["26Q2", 8, 5003],
+    ["26Q3", 7, 4328],
+    ["26Q4", 2, 400]
+  ],
+  "brands": [
+    { "name": "轻氧", "cat": "按摩仪" },
+    { "name": "山野", "cat": "咖啡" },
+    { "name": "云棠", "cat": "家纺" },
+    { "name": "白鹿", "cat": "车载香薰" },
+    { "name": "拾光", "cat": "清洁" },
+    { "name": "北纬", "cat": "车窗膜" },
+    { "name": "小满", "cat": "口香糖" },
+    { "name": "平台创作激励", "cat": "平台" },
+    { "name": "官方话题邀约", "cat": "平台" }
+  ]
+}

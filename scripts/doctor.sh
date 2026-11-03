@@ -38,7 +38,11 @@ elif command -v redbook >/dev/null 2>&1; then
   ok "全局命令 $(command -v redbook) · 版本 $(redbook --version 2>/dev/null || echo '?')"
   CLI_MODE="global"
 elif [ -f "$SKILL_DIR/vendor/redbook/dist/cli.js" ]; then
-  ok "技能内置副本 vendor/redbook · 版本 $(node "$SKILL_DIR/vendor/redbook/dist/cli.js" --version 2>/dev/null || echo '?')（未装全局，直接用内置）"
+  if command -v node >/dev/null 2>&1; then
+    ok "技能内置副本 vendor/redbook · 版本 $(node "$SKILL_DIR/vendor/redbook/dist/cli.js" --version 2>/dev/null || echo '?')（未装全局，直接用内置）"
+  else
+    bad "有内置副本但找不到 node，跑不起来 → 先装 node >=22"
+  fi
   CLI_MODE="vendor"
 else
   bad "既没有全局 redbook，也没有 vendor/redbook（skill 目录可能拷漏了）→ npm i -g @lucasygu/redbook"

@@ -19,11 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-第三方组件说明 / Third-party notice
-
-本仓库 vendor/redbook/ 目录内置 @lucasygu/redbook（https://github.com/lucasygu/redbook），
-同样以 MIT 许可分发，版权归原作者 lucasygu，其 LICENSE 全文见 vendor/redbook/LICENSE。
-本仓库的 MIT 许可不覆盖该目录，该目录适用其自身许可。

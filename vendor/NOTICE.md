@@ -43,3 +43,9 @@ rsync -a --exclude='*.map' --exclude='*.d.ts' \
 
 MIT 允许再分发，但要求保留版权声明与许可证全文 —— 因此 `vendor/redbook/LICENSE` 必须随目录一起保留，
 不要为了减体积删掉。若将来要公开发布本技能，建议在 README 里同样注明上游出处。
+
+## 许可边界（补充说明）
+
+本仓库根目录的 `LICENSE` 是标准 MIT 正文，仅覆盖本仓库自有代码（模板、脚本、文档）。
+`vendor/redbook/` 目录**不适用**该许可，它适用其自身 `vendor/redbook/LICENSE`（同为 MIT，版权归 lucasygu）。
+两者许可兼容，因此可以一起分发；但再分发时两个 LICENSE 都要保留。

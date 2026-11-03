@@ -131,7 +131,7 @@ def main():
 
     if args.demo_banner:
         banner = (
-            '<style>#demoBanner{position:fixed;top:14px;right:14px;z-index:99;'
+            '<style>#demoBanner{position:fixed;bottom:14px;right:14px;z-index:99;'
             'font:600 12px/1.5 ui-sans-serif,system-ui,-apple-system,"PingFang SC",sans-serif;'
             'letter-spacing:.04em;color:#d9744f;background:rgba(251,246,238,.92);'
             'border:1px solid rgba(217,116,79,.38);border-radius:999px;padding:7px 14px;'

@@ -1,13 +1,25 @@
 # blogger-portfolio · 博主作品集生成器
 
-**在线 demo → <https://111seek.github.io/blogger-portfolio/>**（示例人物「林小满」，数据全部虚构、封面是占位图）
+[![MIT](https://img.shields.io/badge/license-MIT-3a322c)](LICENSE)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-d9744f)](scripts/build.py)
+[![Node 22+](https://img.shields.io/badge/node-%E2%89%A522-339933)](scripts/doctor.sh)
+[![Live demo](https://img.shields.io/badge/demo-online-d9744f)](https://111seek.github.io/blogger-portfolio/)
+[![No dependencies](https://img.shields.io/badge/runtime-zero%20deps-6f8f86)](#依赖与许可)
 
-把一个博主的账号数据，做成一份**面试能直接投的单文件 HTML 作品集**：浅色纸感、拍立得作品墙、季度曲线、成绩单 + 粉丝画像，一份 `index.html` 双击就开，图片全部 base64 内嵌，能直接发微信/邮件。
+**简体中文** ｜ [English](README.en.md)
+
+[![在线 demo 截图](docs/preview-desktop.jpg)](https://111seek.github.io/blogger-portfolio/)
+
+> 给一个博主的账号数据，产出一份**面试能直接投的单文件 HTML 作品集**——浅色纸感、拍立得作品墙、季度曲线、成绩单 + 粉丝画像。
+> 双击就能开，图片全部 base64 内嵌，发给面试官不用带任何附件。
+>
+> **核心与平台无关**：自己把数据填进 `data.json` 就能用（抖音 / B站 / Instagram / YouTube 都行）；
+> 自动抓数目前只做了小红书。
 
 同时它是一份 **AI Agent 技能**（WorkBuddy / Claude Skill 结构），把「取数 → 定人设 → 写文案 → 构建 → 体检」整套流程沉淀成了可复用的模板和脚本。换个人只需要换 `data.json`，不必重写设计。
 
 ```
-docs/index.html   ← 在线 demo（GitHub Pages 部署的就是这一份，右上角带「示例页面」角标）
+docs/index.html   ← 在线 demo（GitHub Pages 部署的就是这一份，右下角带「示例页面」角标）
 demo/             ← 生成 demo 的数据源（虚构人物，可照抄结构）
 ```
 
@@ -77,6 +89,12 @@ open demo/index.html            # macOS
 
 `file://` 能正常显示，没有外链请求，断网也一样。
 
+<table><tr>
+<td><img src="docs/preview-mobile.jpg" width="240" alt="手机端首屏"></td>
+<td>手机端也单独调过：数据条折成两行、作品墙变单列、曲线图可横向滑动、正文不小于 14px。
+面试官大概率是拿手机点开你发的链接——这一步值得自己先看一眼。</td>
+</tr></table>
+
 想确认**线上版本长什么样，就先在本地跑同一份**：
 
 ```bash
@@ -144,6 +162,12 @@ vendor/redbook/               内置小红书 CLI（MIT，含 dist/ 与 node_mod
 - **封顶之后排名是假的**：别按点赞排 TOP9，改成按内容类型各挑一条代表作，并在小标题里说明为什么不排名。
 - **写成复盘**：出现「问题」「下一步」「学到」就是跑偏了，整块删掉换成能力卡。
 - **封面比例混杂**：同一账号可能同时有 9:16、3:4、4:3 三种封面，统一 crop 到 3:4 + `object-position:50% 42%`。
+
+## 如果这个仓库帮到你
+
+- ⭐ **点个 Star** —— 这是我继续维护它的主要动力，也让更多做内容的人能搜到它
+- 用它做出来了自己的作品集？去 [Discussions](https://github.com/111seek/blogger-portfolio/discussions) 贴个链接，我把它加进「谁在用」
+- 想要别的平台自动取数（抖音 / B站 / Instagram / YouTube），开个 issue 说一声
 
 ## 依赖与许可
 

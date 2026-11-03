@@ -1,9 +1,13 @@
 # 真实账号数据与产物不进仓库，避免泄露个人信息 / 品牌合作
 portfolio/
-index.html
 data.json
 !demo/data.json
 *真实*.json
+
+# 构建产物：只提交 docs/index.html（GitHub Pages 的在线 demo）
+index.html
+!docs/index.html
+demo/index.html
 
 # 图片：只留示例占位图，真实封面自行保管
 assets/*.webp

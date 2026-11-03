@@ -1,12 +1,18 @@
 # blogger-portfolio · 博主作品集生成器
 
+**在线 demo → <https://111seek.github.io/blogger-portfolio/>**（示例人物「林小满」，数据全部虚构、封面是占位图）
+
 把一个博主的账号数据，做成一份**面试能直接投的单文件 HTML 作品集**：浅色纸感、拍立得作品墙、季度曲线、成绩单 + 粉丝画像，一份 `index.html` 双击就开，图片全部 base64 内嵌，能直接发微信/邮件。
 
 同时它是一份 **AI Agent 技能**（WorkBuddy / Claude Skill 结构），把「取数 → 定人设 → 写文案 → 构建 → 体检」整套流程沉淀成了可复用的模板和脚本。换个人只需要换 `data.json`，不必重写设计。
 
 ```
-demo/index.html   ← 示例成品（示例人物「林小满」，数据为虚构，封面是占位图）
+docs/index.html   ← 在线 demo（GitHub Pages 部署的就是这一份，右上角带「示例页面」角标）
+demo/             ← 生成 demo 的数据源（虚构人物，可照抄结构）
 ```
+
+> 线上那份用 `python3 scripts/build.py --data demo/data.json --out docs/index.html --demo-banner` 生成，
+> `--demo-banner` 会加一个「示例页面 · 人物与数据均为虚构」的角标，避免被当成真人主页。
 
 ## 它解决什么问题
 
@@ -23,7 +29,7 @@ demo/index.html   ← 示例成品（示例人物「林小满」，数据为虚�
 ```bash
 # 1. 先跑示例，确认环境没问题（只需要 python3）
 python3 scripts/build.py --data demo/data.json --out demo/index.html
-open demo/index.html
+open demo/index.html                    # 线上版本见 Pages：docs/index.html
 
 # 2. 换成你的数据：复制 demo/data.json，改字段，封面图放进同目录 assets/
 cp -r demo my-portfolio
@@ -76,6 +82,7 @@ scripts/doctor.sh             取数前置体检
 scripts/redbook.sh            CLI 启动器（全局版 → 内置副本）
 assets/template.html          页面模板（完整 CSS/JS，{{PLACEHOLDER}} 形式）
 demo/                         可直接构建的示例（虚构人物 + 占位封面）
+docs/index.html               GitHub Pages 在线 demo（由 demo/ 构建而来）
 references/data-collection.md 抓数、聚合、Cookie 修复、反风控
 references/copy-playbook.md   文案公式、三级数字、禁忌、面试问题映射
 references/theming.md         换人设：时间线隐喻、色板、装饰、无障碍底线
@@ -95,4 +102,4 @@ vendor/redbook/               内置小红书 CLI（MIT，含 dist/ 与 node_mod
 - 运行时：`python3`（构建）、`node ≥ 22`（仅抓数与体检需要）
 - 体检：`playwright-core` + 本机 Chrome（可选）
 - 内置的 [`vendor/redbook/`](vendor/NOTICE.md) 来自 [lucasygu/redbook](https://github.com/lucasygu/redbook)，MIT 许可，版权归原作者；升级与合规说明见 `vendor/NOTICE.md`
-- 本仓库其余代码 MIT
+- 本仓库其余代码：MIT，见 [LICENSE](LICENSE)（Copyright © 2026 seek-shao）

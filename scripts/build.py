@@ -84,6 +84,8 @@ def main():
     ap.add_argument('--data', required=True)
     ap.add_argument('--out', default='index.html')
     ap.add_argument('--template', default=str(TEMPLATE))
+    ap.add_argument('--demo-banner', action='store_true',
+                    help='页面右上角加"示例页面 · 数据虚构"角标，用于公开 demo')
     args = ap.parse_args()
 
     data_path = pathlib.Path(args.data).expanduser().resolve()
@@ -126,6 +128,18 @@ def main():
     left = sorted(set(re.findall(r'\{\{([A-Z_]+)\}\}', html)))
     if left:
         die('模板里还有没填的占位符：' + ', '.join(left))
+
+    if args.demo_banner:
+        banner = (
+            '<style>#demoBanner{position:fixed;top:14px;right:14px;z-index:99;'
+            'font:600 12px/1.5 ui-sans-serif,system-ui,-apple-system,"PingFang SC",sans-serif;'
+            'letter-spacing:.04em;color:#d9744f;background:rgba(251,246,238,.92);'
+            'border:1px solid rgba(217,116,79,.38);border-radius:999px;padding:7px 14px;'
+            'backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(58,50,44,.07)}'
+            '@media print{#demoBanner{display:none}}</style>'
+            '<div id="demoBanner">示例页面 · 人物与数据均为虚构</div>'
+        )
+        html = html.replace('<body>', '<body>\n' + banner, 1)
 
     out = pathlib.Path(args.out).expanduser()
     out.parent.mkdir(parents=True, exist_ok=True)

@@ -42,6 +42,39 @@ node scripts/verify.js my-portfolio/index.html
 
 `build.py` 会在占位符没填完时直接报错退出，不会产出半成品；构建完会列出还剩下的 7 处示例文案（模板自带的样例，必须按真实账号重写）。
 
+## 本地预览
+
+成品是**单文件、图片全部内嵌**，所以最省事的预览就是直接双击：
+
+```bash
+open demo/index.html            # macOS
+# Windows: start demo\index.html    Linux: xdg-open demo/index.html
+```
+
+`file://` 能正常显示，没有外链请求，断网也一样。
+
+**想在手机上看看效果**（面试官大概率用手机打开，这一步值得做）——起一个本地静态服务器，用局域网 IP 访问：
+
+```bash
+cd docs                                   # 或任意放 index.html 的目录
+python3 -m http.server 8080 --bind 0.0.0.0
+
+ipconfig getifaddr en0                    # macOS 查本机内网 IP，例如 192.168.1.23
+# 手机连同一个 Wi-Fi，浏览器打开 http://192.168.1.23:8080
+```
+
+想确认**线上版本长什么样，就先在本地跑同一份**：
+
+```bash
+python3 scripts/build.py --data demo/data.json --out docs/index.html --demo-banner
+cd docs && python3 -m http.server 8080    # 这就是 Pages 会发布的那一份
+```
+
+改完 `data.json` 重新构建、手机刷新即可，不用反复传文件；`Ctrl+C` 结束服务。
+
+> 注意：`--bind 0.0.0.0` 是让同网段的设备能访问，不要在有公共 Wi-Fi 的场合开太久。
+> 只想本机看，去掉这个参数（默认只监听 127.0.0.1）。
+
 ## 抓数据（可选）
 
 公开数据（笔记列表、点赞/收藏/分享、封面、季度分布）可以用内置的小红书 CLI 抓。**CLI 已经打包在 `vendor/redbook/` 里，不需要 `npm i -g`。**

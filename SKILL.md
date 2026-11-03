@@ -160,6 +160,7 @@ SKILL.md                      本文
 scripts/build.py              data.json + 模板 → 单文件 HTML
 scripts/verify.js             交付前体检（playwright-core + 本机 Chrome）
 scripts/doctor.sh             取数前置体检（node / CLI / cookie / 登录态）
+scripts/preview.sh            构建 + 起服务 + 手机地址 + 改动自动重建（一条命令）
 scripts/redbook.sh            CLI 启动器（全局版 → 内置副本，自动选）
 assets/template.html          页面模板（完整 CSS/JS，占位符 {{NAME}} 形式）
 demo/                         可直接构建的示例（虚构人物 + 占位封面，跑一遍验证环境）

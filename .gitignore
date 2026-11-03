@@ -8,6 +8,7 @@ data.json
 index.html
 !docs/index.html
 demo/index.html
+.preview/
 
 # 图片：只留示例占位图，真实封面自行保管
 assets/*.webp

@@ -44,7 +44,31 @@ node scripts/verify.js my-portfolio/index.html
 
 ## 本地预览
 
-成品是**单文件、图片全部内嵌**，所以最省事的预览就是直接双击：
+### 一条命令（推荐）
+
+```bash
+bash scripts/preview.sh                                  # 预览 demo/data.json
+bash scripts/preview.sh my-portfolio/data.json           # 预览自己的数据
+bash scripts/preview.sh --port 9000 --no-watch           # 换端口 / 关掉自动重建
+bash scripts/preview.sh --demo-banner                    # 带「示例页面」角标，等同线上 demo
+```
+
+它做四件事：构建到 `.preview/index.html`（已 gitignore）→ 起 `python3 -m http.server` 绑 `0.0.0.0`
+→ 打印本地和手机两个地址并自动开浏览器 → **盯着 `data.json`、模板和封面图，改了自动重建**。
+所以循环是：改 `data.json` → 保存 → 手机下拉刷新，不用重启任何东西。`Ctrl+C` 退出。
+
+```
+数据源：demo/data.json
+✓ 0 秒构建完成 · .preview/index.html  (52 KB，含 9 条笔记)
+
+  本地：http://127.0.0.1:8080
+  手机：http://192.168.1.23:8080   ← 同一 Wi-Fi 下打开
+  改动 data.json / 模板 / 封面后自动重建，手机下拉刷新即可。Ctrl+C 退出。
+```
+
+### 手动几种方式
+
+成品是**单文件、图片全部内嵌**，最省事的就是直接双击：
 
 ```bash
 open demo/index.html            # macOS
@@ -53,16 +77,6 @@ open demo/index.html            # macOS
 
 `file://` 能正常显示，没有外链请求，断网也一样。
 
-**想在手机上看看效果**（面试官大概率用手机打开，这一步值得做）——起一个本地静态服务器，用局域网 IP 访问：
-
-```bash
-cd docs                                   # 或任意放 index.html 的目录
-python3 -m http.server 8080 --bind 0.0.0.0
-
-ipconfig getifaddr en0                    # macOS 查本机内网 IP，例如 192.168.1.23
-# 手机连同一个 Wi-Fi，浏览器打开 http://192.168.1.23:8080
-```
-
 想确认**线上版本长什么样，就先在本地跑同一份**：
 
 ```bash
@@ -70,7 +84,7 @@ python3 scripts/build.py --data demo/data.json --out docs/index.html --demo-bann
 cd docs && python3 -m http.server 8080    # 这就是 Pages 会发布的那一份
 ```
 
-改完 `data.json` 重新构建、手机刷新即可，不用反复传文件；`Ctrl+C` 结束服务。
+`ipconfig getifaddr en0` 可查本机内网 IP（Linux 用 `hostname -I`）。
 
 > 注意：`--bind 0.0.0.0` 是让同网段的设备能访问，不要在有公共 Wi-Fi 的场合开太久。
 > 只想本机看，去掉这个参数（默认只监听 127.0.0.1）。
@@ -113,6 +127,7 @@ scripts/build.py              data.json + 模板 → 单文件 HTML
 scripts/verify.js             交付前体检（三档视口，查报错/溢出/对比度）
 scripts/doctor.sh             取数前置体检
 scripts/redbook.sh            CLI 启动器（全局版 → 内置副本）
+scripts/preview.sh            构建 + 起服务 + 手机地址 + 改动自动重建
 assets/template.html          页面模板（完整 CSS/JS，{{PLACEHOLDER}} 形式）
 demo/                         可直接构建的示例（虚构人物 + 占位封面）
 docs/index.html               GitHub Pages 在线 demo（由 demo/ 构建而来）

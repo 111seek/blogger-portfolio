@@ -474,8 +474,18 @@ bars('share','share'); bars('collect','collect');
 (function(){
   const svg = document.getElementById('qchart');
   const css = getComputedStyle(document.documentElement), c = v => css.getPropertyValue(v).trim();
-  const W=1000,H=330,L=60,R=30,T=34,B=50, cw=W-L-R, ch=H-T-B, max=100000, n=Q.length, slot=cw/n;
+  const W=1000,H=330,L=60,R=30,T=34,B=50, cw=W-L-R, ch=H-T-B, n=Q.length, slot=cw/n;
   const peak = Math.max(...Q.map(q=>q[2]));
+  // 纵轴按数据自适应（原来固定 10 万，小账号会被压成一条贴底的平线）
+  const niceMax = v => {
+    const p = Math.pow(10, Math.floor(Math.log10(v))), r = v / p;
+    const steps = [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10];
+    return (steps.find(s => r <= s) || 10) * p;
+  };
+  const max = niceMax(peak * 1.05);
+  const axis = v => v >= 10000
+    ? (v / 10000).toLocaleString('en-US', {maximumFractionDigits: 1}) + '万'
+    : fmt(v);
   const pts = Q.map(([q,cnt,lk],i)=>[L+slot*i+slot/2, T+ch-lk/max*ch]);
   // Catmull-Rom → 贝塞尔，得到平滑曲线；控制点 y 夹在绘图区内，避免冲出 0 线
   const clampY = y => Math.min(T+ch, Math.max(T, y));
@@ -486,10 +496,10 @@ bars('share','share'); bars('collect','collect');
   }
   const area = d + ` L${pts[n-1][0]},${T+ch} L${pts[0][0]},${T+ch} Z`;
   let s = `<defs><linearGradient id="qg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c('--sun')}" stop-opacity=".28"/><stop offset="1" stop-color="${c('--sage')}" stop-opacity=".04"/></linearGradient></defs>`;
-  [0,25000,50000,75000,100000].forEach(v=>{
-    const y = T+ch-v/max*ch;
+  [0,.25,.5,.75,1].forEach(f=>{
+    const v = Math.round(max*f), y = T+ch-v/max*ch;
     s += `<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="${c('--line')}" stroke-dasharray="${v?'4 5':'0'}"/>`;
-    s += `<text x="${L-12}" y="${y+4}" text-anchor="end" font-size="12" fill="${c('--mute')}">${v?(v/10000)+'万':'0'}</text>`;
+    s += `<text x="${L-12}" y="${y+4}" text-anchor="end" font-size="12" fill="${c('--mute')}">${axis(v)}</text>`;
   });
   s += `<path d="${area}" fill="url(#qg)"/>`;
   s += `<path id="qline" d="${d}" fill="none" stroke="${c('--sun')}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;

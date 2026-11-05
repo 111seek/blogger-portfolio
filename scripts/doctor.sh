@@ -73,14 +73,23 @@ else
   if [ "$CLI_MODE" = "none" ] || [ ! -f "$COOKIE" ]; then
     warn "跳过（上面有阻塞项）"
   else
-    OUT="$(bash "$SKILL_DIR/scripts/redbook.sh" whoami 2>&1 | head -5)"
+    OUT="$(bash "$SKILL_DIR/scripts/redbook.sh" whoami --json 2>&1)"
     if printf '%s' "$OUT" | grep -qiE 'route_gone|unauthorized|No XHS session|401|403'; then
       bad "session 已失效 → 重新登录：bash scripts/redbook.sh auth save"
-      printf '     %s\n' "$OUT"
-    elif [ -n "$OUT" ]; then
-      ok "$(printf '%s' "$OUT" | tr '\n' ' ' | cut -c1-80)"
+      printf '     %s\n' "$OUT" | head -3
+    elif printf '%s' "$OUT" | grep -q '"user_id"'; then
+      printf '%s' "$OUT" | python3 -c '
+import json,sys,re
+raw=sys.stdin.read()
+raw=raw[raw.find("{"):]
+d=json.loads(raw)
+print("  \033[32m✓\033[0m 已登录：%s（小红书号 %s）" % (d.get("nickname","?"), d.get("red_id","?")))
+print("          user_id %s" % d.get("user_id","?"))
+' 2>/dev/null || warn "whoami 返回了解析不了的输出"
+      echo "  本技能只给这个账号做作品集；换账号先重新 auth save。"
     else
       warn "whoami 无输出，可能网络或接口变动，先跑一条 search 试"
+      printf '     %s\n' "$OUT" | head -3
     fi
   fi
 fi

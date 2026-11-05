@@ -4,6 +4,10 @@ data.json
 !demo/data.json
 *真实*.json
 
+# 账号归属校验记录（含 user_id，只在本地有效）
+.owner.lock
+me.json
+
 # 构建产物：只提交 docs/index.html（GitHub Pages 的在线 demo）
 index.html
 !docs/index.html

@@ -2,7 +2,10 @@
 
 作品集里每个数字都要能对上主页，所以先取数、再写字。数据分两类，来源不同。
 
-## 一、公开数据（redbook CLI 抓）
+> **只采自己的号。** 开抓之前先过身份闸：`bash scripts/check-self.sh --data <data.json>`。
+> 它要求「当前登录账号 == 目标账号」，不一致直接 exit 2。下面的所有命令都不接受外部指定的他人账号。
+
+## 一、公开数据（redbook CLI 抓，仅限本人账号）
 
 **CLI 已随技能内置**（`vendor/redbook/`，MIT，版本见 `vendor/NOTICE.md`），对方不必先装 npm 包。
 统一用启动器调用，它会自动选「全局版 → 内置副本」，并设好凭据变量：
@@ -19,16 +22,22 @@ $RB --version
 - 报 `No XHS session` / `route_gone` / `unauthorized` → 见文末「Cookie 修复」
 
 ```bash
-# 1) 纯数字的小红书号要先解析成 userId（主页接口需要 xsec_token）
-$RB search "午休日记" --json | head -c 800
+# 1) 身份和 token 一次拿全，不需要 search 猜账号
+$RB whoami --json 2>/dev/null > me.json
+UID_=$(python3 -c 'import json;print(json.load(open("me.json"))["user_id"])')
+TK=$(python3 -c 'import json;print(json.load(open("me.json"))["xsec_token"])')
 
 # 2) 拉全量笔记（串行 + 3s 间隔，千万不要并发）
-$RB user-posts <userId> --xsec-token '<token>' --xsec-source pc_search \
+$RB user-posts "$UID_" --xsec-token "$TK" --xsec-source pc_search \
   --all --delay 3000 --json > posts.json
 ```
 
-`posts.json.notes[]` 每条包含 `note_id / display_title / time / type / interact_info.liked_count / webUrl`。
-**按 `note_id` 去重**（列表接口会重复吐条目，实测 91 → 89）。
+`whoami` 返回的 `xsec_token` 与主页接口要求的一致，所以**不用先 search 陌生昵称**——
+那一步原本是用来解析别人的账号，现在正好省掉。
+
+`posts.json.notes[]` 每条包含 `note_id / display_title / time / type / interact_info.liked_count / webUrl / user.user_id`。
+**先核 `user.user_id` 是否全等于 `$UID_`**（不等就是 token 拿错了，删掉重抓），再**按 `note_id` 去重**
+（列表接口会重复吐条目，实测 91 → 89）。
 
 ```bash
 node -e '
@@ -56,7 +65,7 @@ TOP9 的封面单独取：`$RB read <noteId> --json`，取首图 URL 后 `curl` 
 
 `quarters` 做成 `[["24Q3",1,260],["24Q4",17,37117], ...]`，第二项是篇数（横轴下标注），第三项是点赞合计（曲线高度）。
 
-## 二、后台数据（只能问用户要）
+## 二、后台数据（只能问用户要，且只能是他自己的）
 
 以下公开页面上看不到，**必须让用户提供截图或口述**，并且写进作品集前要跟他确认口径：
 
@@ -69,7 +78,27 @@ TOP9 的封面单独取：`$RB read <noteId> --json`，取首图 URL 后 `curl` 
 用户说「总赞藏 10 万+」，主页显示 29.3 万。处理原则：**统一用主页能对上的数字**，
 并告诉用户「面试官可能当场打开主页核对」。
 
-## 三、Cookie 失效修复（macOS）
+## 三、账号归属校验（采数前置 + 构建前置）
+
+```bash
+bash scripts/check-self.sh --data portfolio/data.json
+```
+
+| 退出码 | 含义 | 处理 |
+|---|---|---|
+| 0 | 登录账号 == 目标账号，已写 `.owner.lock` + `site.account` | 继续 |
+| 2 | 账号不匹配 / `profile_url` 指向别人 | **停手**，说明原因，不绕 |
+| 3 | 登录态失效 | `bash scripts/redbook.sh auth save` |
+
+通过后 `build.py` 还会再查一次 `.owner.lock`（7 天时效）。所以「校验一次、之后随便换号」
+这条路也堵死了。
+
+**为什么设这道闸**：抓的是别人的笔记、照片、粉丝画像和商业数据，替他人成稿等于在未经授权的情况下
+处理他人个人信息与肖像。只允许本人跑自己的号，是这套工具唯一合理的授权边界。
+
+对方想用：把整个技能目录打包给他，让他**用自己的账号登录**后自行运行——不是替他跑。
+
+## 四、Cookie 失效修复（macOS）
 
 小红书 Cookie 走 Chrome 加密，后台进程读钥匙串会 `exit 128`。可行路径是复制 Chrome profile
 到临时目录、用 headless 起 CDP、走浏览器级 `Storage.getCookies`（redbook 自带的
@@ -89,7 +118,7 @@ sleep 3 && node <抓取脚本> && kill %1
 抓到的 cookie 拼成字符串交给 `$RB auth save --cookie-string`，写入 `~/.redbook/cookies.json`。
 先试最省事的 `$RB auth save`（读本机 Chrome）；钥匙串弹窗被拒或 `exit 128` 时才走上面这套 CDP。
 
-## 四、评论区（可选，做增长诊断时才抓）
+## 五、评论区（可选，做增长诊断时才抓）
 
 ```bash
 $RB comments "<笔记URL>" --all --json > c/<noteId>.json

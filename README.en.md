@@ -14,6 +14,12 @@
 > warm paper look, polaroid work wall, quarterly growth curve, scorecard + audience breakdown.
 > One `index.html`, images inlined as base64, opens by double-click, no server, no CDN, no build step.
 >
+> **Self-serve only.** You must log in to your own Xiaohongshu account, and the logged-in account must
+> **equal the account being profiled** — otherwise `check-self.sh` refuses and `build.py` won't build.
+> It will not produce a portfolio for a third-party creator: that means handling someone else's notes,
+> photos and commercial data without authorization.
+> Want to hand it to another creator? Zip the folder and let them log in with their own account.
+>
 > **The core is platform-agnostic** — fill in `data.json` yourself and it works for TikTok, YouTube,
 > Instagram, Bilibili, Xiaohongshu… The automatic scraping step currently only ships for Xiaohongshu.
 
@@ -34,12 +40,17 @@ This repo freezes all three. Output is a single HTML file with zero external req
 ## Quick start
 
 ```bash
-# 1. Build the bundled demo first — only python3 is required
+# 0. Identity gate — required before any scraping (logged-in account must be the one you profile)
+bash scripts/doctor.sh
+bash scripts/check-self.sh --data my-portfolio/data.json
+
+# 1. Build the bundled demo first — only python3 is required (fictional persona, gate skipped)
 python3 scripts/build.py --data demo/data.json --out demo/index.html
 open demo/index.html
 
 # 2. Use your own data: copy the demo, edit fields, drop covers into its assets/
 cp -r demo my-portfolio
+bash scripts/check-self.sh --data my-portfolio/data.json   # writes .owner.lock + site.account
 python3 scripts/build.py --data my-portfolio/data.json --out my-portfolio/index.html
 
 # 3. Optional pre-flight check (needs playwright-core + local Chrome)

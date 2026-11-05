@@ -13,6 +13,10 @@
 > 给一个博主的账号数据，产出一份**面试能直接投的单文件 HTML 作品集**——浅色纸感、拍立得作品墙、季度曲线、成绩单 + 粉丝画像。
 > 双击就能开，图片全部 base64 内嵌，发给面试官不用带任何附件。
 >
+> **只给本人用**：必须先用小红书登录，且**登录账号 == 要做的账号**，否则 `check-self.sh` 拒绝、
+> `build.py` 也构建不了。不为第三方博主代做——抓的是别人的笔记、照片和商业数据。
+> 想给别人用？把目录打包给他，让他用自己的号跑一遍。
+>
 > **核心与平台无关**：自己把数据填进 `data.json` 就能用（抖音 / B站 / Instagram / YouTube 都行）；
 > 自动抓数目前只做了小红书。
 
@@ -39,12 +43,17 @@ demo/             ← 生成 demo 的数据源（虚构人物，可照抄结构�
 ## 快速开始
 
 ```bash
-# 1. 先跑示例，确认环境没问题（只需要 python3）
+# 0. 先过身份闸（要抓数就必须做：登录账号必须就是要做的那个号）
+bash scripts/doctor.sh                    # 看 node / CLI / cookie / 当前登录的是谁
+bash scripts/check-self.sh --data my-portfolio/data.json
+
+# 1. 先跑示例，确认环境没问题（只需要 python3，示例是虚构人物，跳过身份校验）
 python3 scripts/build.py --data demo/data.json --out demo/index.html
 open demo/index.html                    # 线上版本见 Pages：docs/index.html
 
 # 2. 换成你的数据：复制 demo/data.json，改字段，封面图放进同目录 assets/
 cp -r demo my-portfolio
+bash scripts/check-self.sh --data my-portfolio/data.json   # 会写入 .owner.lock 和 site.account
 python3 scripts/build.py --data my-portfolio/data.json --out my-portfolio/index.html
 
 # 3. 交付前体检（可选，需要 playwright-core + 本机 Chrome）
@@ -52,7 +61,7 @@ npm i playwright-core
 node scripts/verify.js my-portfolio/index.html
 ```
 
-`build.py` 会在占位符没填完时直接报错退出，不会产出半成品；构建完会列出还剩下的 7 处示例文案（模板自带的样例，必须按真实账号重写）。
+`build.py` 会先复核 `.owner.lock`（7 天有效），再检查占位符是否填完，任一不过就直接报错退出，不会产出半成品；构建完会列出还剩下的 7 处示例文案（模板自带的样例，必须按真实账号重写）。
 
 ## 本地预览
 
@@ -140,8 +149,9 @@ bash scripts/redbook.sh user-posts <userId> --all --delay 3000 --json > posts.js
 ## 目录
 
 ```
-SKILL.md                      Agent 技能说明（七板块流程 + 常见坑）
-scripts/build.py              data.json + 模板 → 单文件 HTML
+SKILL.md                      Agent 技能说明（七板块流程 + 身份闸 + 常见坑）
+scripts/check-self.sh         身份闸：登录账号 == 目标账号才放行，写 .owner.lock + site.account
+scripts/build.py              data.json + 模板 → 单文件 HTML（构建前复核 .owner.lock）
 scripts/verify.js             交付前体检（三档视口，查报错/溢出/对比度）
 scripts/doctor.sh             取数前置体检
 scripts/redbook.sh            CLI 启动器（全局版 → 内置副本）

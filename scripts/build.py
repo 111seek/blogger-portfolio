@@ -5,13 +5,20 @@
 用法：
     python3 build.py --data data.json --out index.html
 
+构建前会做一次**账号归属校验**：data.json 的 site.account.user_id 必须与
+<data.json 所在目录>/.owner.lock 一致，而这个 lock 只能由
+`bash scripts/check-self.sh --data <data.json>` 在「小红书登录账号 == 目标账号」时写出。
+没有 lock、或对不上，一律拒绝构建 —— 本技能只给本人做，不为第三方博主代做。
+
 约定：
 - data.json 里所有图片字段写相对路径（相对 data.json 所在目录），会被 base64 内嵌；
   也可以直接写 http(s) 链接或 data: 开头的字符串，原样保留。
 - 字段结构见 demo/data.json（可直接构建的示例，虚构人物 + 占位封面）；缺 key 直接报错，避免生成半成品。
+- `site.demo: true` 的数据（只有仓库自带的 demo 走这条）跳过归属校验，构建时会明确提示。
 """
 import argparse
 import base64
+import datetime
 import json
 import mimetypes
 import pathlib
@@ -25,6 +32,10 @@ REQUIRED = {
     'site': ['title', 'meta', 'name', 'tagline', 'handle', 'profile_url', 'collected_at', 'avatar', 'start'],
     'hero': ['clock', 'h1', 'lead', 'roles'],
 }
+
+LOCK_NAME = '.owner.lock'
+DEFAULT_MAX_AGE_DAYS = 7
+UID_RE = re.compile(r'/user/profile/([0-9a-fA-F]{24})')
 
 
 def die(msg):
@@ -79,19 +90,85 @@ def check_shape(data):
         print('! notes 超过 9 条，只有前 9 条会展示（TOP1 单列 + TOP2-5 常显 + TOP6-9 折叠）')
 
 
+def verify_owner(data, base, max_age_days):
+    """只允许「本人账号」构建。返回 (user_id, nickname) 或 ('', '')（demo 模式）。"""
+    site = data.get('site', {})
+    account = site.get('account') or {}
+    uid = (account.get('user_id') or '').strip()
+
+    m = UID_RE.search(site.get('profile_url', '') or '')
+    link_uid = m.group(1) if m else ''
+
+    if site.get('demo') is True:
+        if uid:
+            die('这份数据标了 site.demo=true，却又带着真实 user_id —— 二选一：要么删掉 demo 标记走校验，'
+                '要么清掉身份信息当示例用')
+        print('! 示例数据（虚构人物）：跳过账号归属校验，不得用于对外投递')
+        return '', ''
+
+    if not uid:
+        die('data.json 缺少 site.account.user_id —— 无法确认这份作品集属于谁。\n'
+            '  先跑：bash scripts/check-self.sh --data <data.json>\n'
+            '  它会校验「当前登录的小红书账号 == 目标账号」，通过后自动写入这个字段和 .owner.lock')
+
+    if link_uid and link_uid != uid:
+        die(f'site.profile_url 指向 {link_uid}，与 site.account.user_id={uid} 不一致')
+
+    lock_path = base / LOCK_NAME
+    if not lock_path.is_file():
+        die(f'没有找到账号归属记录 {lock_path}\n'
+            f'  本技能只允许本人用自己的小红书账号生成作品集，必须先通过登录校验：\n'
+            f'    bash scripts/check-self.sh --data {base / "data.json"}\n'
+            '  （它会要求当前登录的账号就是这个 user_id，通过后才写出 .owner.lock）')
+
+    try:
+        lock = json.loads(lock_path.read_text(encoding='utf-8'))
+    except Exception as e:
+        die(f'{lock_path} 读不出来（{e}），重新跑 bash scripts/check-self.sh --data ...')
+
+    if lock.get('user_id') != uid:
+        die(f'账号归属记录对不上：\n'
+            f'  .owner.lock 记录的是 {lock.get("user_id")}（{lock.get("nickname", "?")}）\n'
+            f'  data.json 写的是 {uid}\n'
+            '  要么这份数据不是那个号的，要么 lock 过期了。重跑：bash scripts/check-self.sh --data ...')
+
+    ts = lock.get('verified_at', '')
+    try:
+        verified = datetime.datetime.fromisoformat(ts)
+    except Exception:
+        die(f'.owner.lock 里的 verified_at 格式不对（{ts!r}），重跑 check-self.sh')
+    now = datetime.datetime.now().astimezone()
+    if verified.tzinfo is None:
+        verified = verified.replace(tzinfo=now.tzinfo)
+    age_days = (now - verified).total_seconds() / 86400
+    if age_days > max_age_days:
+        die(f'账号归属校验是 {age_days:.1f} 天前做的，超过 {max_age_days} 天时效。\n'
+            '  重新跑：bash scripts/check-self.sh --data ...')
+    if age_days < -0.1:
+        die('.owner.lock 的 verified_at 在未来，系统时间或文件被改过，重跑 check-self.sh')
+
+    return uid, lock.get('nickname') or account.get('nickname') or ''
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--data', required=True)
     ap.add_argument('--out', default='index.html')
     ap.add_argument('--template', default=str(TEMPLATE))
     ap.add_argument('--demo-banner', action='store_true',
-                    help='页面右上角加"示例页面 · 数据虚构"角标，用于公开 demo')
+                    help='页面右下角加"示例页面 · 数据虚构"角标，用于公开 demo')
+    ap.add_argument('--max-age-days', type=float, default=DEFAULT_MAX_AGE_DAYS,
+                    help=f'账号归属校验的有效期，默认 {DEFAULT_MAX_AGE_DAYS} 天')
     args = ap.parse_args()
 
     data_path = pathlib.Path(args.data).expanduser().resolve()
     base = data_path.parent
     data = json.loads(data_path.read_text(encoding='utf-8'))
     check_shape(data)
+
+    owner_id, owner_nick = verify_owner(data, base, args.max_age_days)
+    if owner_id:
+        print(f'✓ 账号归属已校验：{owner_nick or "?"} · {owner_id}')
 
     notes = []
     for n in data['notes'][:9]:

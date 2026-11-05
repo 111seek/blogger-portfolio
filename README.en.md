@@ -1,6 +1,7 @@
 # blogger-portfolio · portfolio generator for content creators
 
 [![MIT](https://img.shields.io/badge/license-MIT-3a322c)](LICENSE)
+[![release](https://img.shields.io/github/v/release/111seek/blogger-portfolio?color=d9744f)](https://github.com/111seek/blogger-portfolio/releases)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8%2B-d9744f)](scripts/build.py)
 [![Node 22+](https://img.shields.io/badge/node-%E2%89%A522-339933)](scripts/doctor.sh)
 [![Live demo](https://img.shields.io/badge/demo-online-d9744f)](https://111seek.github.io/blogger-portfolio/)
